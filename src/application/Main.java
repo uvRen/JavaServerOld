@@ -24,5 +24,10 @@ public class Main extends Application {
 	
 	public static void main(String[] args) {
 		launch(args);
+		
+		Server server = new Server(9999);
+		server.startServer();
+		server.stopServer();
+		
 	}
 }
