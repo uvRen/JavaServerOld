@@ -1,10 +1,8 @@
-package application;
+package server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
-
-import com.sun.xml.internal.ws.client.ClientSchemaValidationTube;
 
 /**
  * A multi-threaded JavaServer that handles incoming connections and data.
@@ -73,6 +71,14 @@ public class Server {
 	public void addClient(ClientThread client) {
 		this.clients.add(client);
 	}
+	
+	/**
+	 * Gets the status of the server connection
+	 * @return	<b>True</b> if server is online, else <b>False</b>
+	 */
+	public boolean isServerOnline() {
+		return !server.isClosed();
+	}
 }
 
 /**
@@ -91,15 +97,15 @@ class ListenForIncomingConnections implements Runnable {
 	}
 	
 	public void run() {
-		while(!socketserver.isClosed()) {
+		while(true) {
 			try {
 				//When a client connect a ClientThread object is created
-				ClientThread client = new ClientThread(socketserver, socketserver.accept());
+				ClientThread client = new ClientThread(socketserver.accept());
 				server.addClient(client);
 			}
 			catch(IOException e) {
-				System.err.println("Server.java: server.accept() failed");
-				e.printStackTrace();
+				//Server shutdown
+				break;
 			}
 		}
 	}

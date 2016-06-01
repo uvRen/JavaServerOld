@@ -1,0 +1,10 @@
+This document contains all the send codes that is send between server and client. 
+It defines what each part are supposed to do when a code is received. 
+
+Server send:
+
+Server receives:
+
+Client send:
+
+Client receives:
