@@ -36,9 +36,9 @@
       </ToolBar>
    </bottom>
    <center>
-      <Button mnemonicParsing="false" text="Anslut till server" BorderPane.alignment="CENTER" />
+      <Button mnemonicParsing="false" onAction="#connectToServer" text="Anslut till server" BorderPane.alignment="CENTER" />
    </center>
    <left>
-      <TextArea prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <TextArea fx:id="textArea" prefHeight="200.0" prefWidth="200.0" text="Received data:" BorderPane.alignment="CENTER" />
    </left>
 </BorderPane>

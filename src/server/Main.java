@@ -8,12 +8,17 @@ import javafx.scene.Scene;
 
 
 public class Main extends Application {
+	
+	private static ServerMainController controller = null;
+	
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			Parent root = FXMLLoader.load(getClass().getResource("MainServerScene.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("MainServerScene.fxml"));
+			Parent root = (Parent) loader.load();
+			Main.controller = (ServerMainController)loader.getController();
 			Scene scene = new Scene(root, 600, 400);
-			
+
 			primaryStage.setScene(scene);
 			primaryStage.show();
 		} 
@@ -24,5 +29,13 @@ public class Main extends Application {
 	
 	public static void main(String[] args) {
 		launch(args);
+	}
+	
+	/**
+	 * Gets the controller that is connected to MainServerScene. 
+	 * @return	Controller
+	 */
+	public static ServerMainController getServerMainController() {
+		return controller;
 	}
 }

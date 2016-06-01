@@ -45,4 +45,14 @@ public class Client {
 			return false;
 		}
 	}
+	
+	/**
+	 * Gets the status of the connection to server
+	 * @return	<b>True</b> if client is connected, else <b>False</b>
+	 */
+	public boolean isClientConnected() {
+		return !client.isClosed();
+	}
+	
+	
 }

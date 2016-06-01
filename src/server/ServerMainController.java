@@ -32,6 +32,13 @@ public class ServerMainController {
 	}
 	
 	/**
+	 * When user clicks 'Preference' a window with settings should appear
+	 */
+	public void showPreferenceWindow() {
+		System.out.println("Hello");
+	}
+	
+	/**
 	 * Start up the server at given port
 	 */
 	private boolean startServer() {
@@ -67,4 +74,6 @@ public class ServerMainController {
 	private void changeColorOnServerStatus(Color color) {
 		serverStatusCircle.setFill(color);
 	}
+	
+	
 }
