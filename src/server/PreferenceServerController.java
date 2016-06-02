@@ -1,5 +1,8 @@
 package server;
 
+import java.util.Properties;
+import java.util.prefs.Preferences;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,14 +19,26 @@ public class PreferenceServerController {
 	@FXML private HBox contentContainer;
 	@FXML private GridPane optionContainer;
 	
+	private TextField serverNameTextField,
+					  serverPortTextField,
+					  serverConnectionsTextField;
+	
+	Preferences preference = Preferences.userRoot().node(this.getClass().getName());
+	
 	/**
 	 * Initialize the TreeView containing all options and by default show all
 	 * options for the group 'General'
 	 */
+	@SuppressWarnings("unchecked")
 	public void initTreeViewSettings() {
-		TreeItem<String> root = new TreeItem<String>("General");
+		TreeItem<String> root = new TreeItem<String>("DummyNode");
+		TreeItem<String> general = new TreeItem<String>("General");
+		TreeItem<String> client = new TreeItem<String>("Client");
+		
+		root.getChildren().addAll(general, client);
 		
 		TreeView<String> tree = new TreeView<String>(root);
+		tree.setShowRoot(false);
 		//Remove the TreeView that is added from SceneBuilder and replace it with a new one
 		contentContainer.getChildren().remove(0);
 		contentContainer.getChildren().add(0, tree);
@@ -38,22 +53,46 @@ public class PreferenceServerController {
 		Label serverNameLabel = new Label("Servername");
 		GridPane.setConstraints(serverNameLabel, 0, 0);
 		
-		TextField serverNameTextField = new TextField();
+		serverNameTextField = new TextField();
+		serverNameTextField.setText(preference.get("servername", ""));
 		GridPane.setConstraints(serverNameTextField, 1, 0);
 		
 		Label serverPortLabel = new Label("Port");
 		GridPane.setConstraints(serverPortLabel, 0, 1);
 		
-		TextField serverPortTextField = new TextField();
+		serverPortTextField = new TextField();
+		serverPortTextField.setText(preference.get("port", ""));
 		GridPane.setConstraints(serverPortTextField, 1, 1);
 		
+		Label serverConnectionsLabel = new Label("Connections");
+		GridPane.setConstraints(serverConnectionsLabel, 0, 2);
+		
+		serverConnectionsTextField = new TextField();
+		serverConnectionsTextField.setText(preference.get("connections", ""));
+		GridPane.setConstraints(serverConnectionsTextField, 1, 2);
+		
 		Button saveButton = new Button("Save");
+		saveButton.setOnMouseClicked(e -> 
+		{
+			saveOptions();
+		});
 		GridPane.setConstraints(saveButton, 0, 14);
 		
 		optionContainer.getChildren().addAll(serverNameLabel, 
 											 serverNameTextField,
 											 saveButton,
 											 serverPortLabel,
-											 serverPortTextField);
+											 serverPortTextField,
+											 serverConnectionsLabel,
+											 serverConnectionsTextField);
+	}
+	
+	/**
+	 * Save all options that is collected from the 'Preference' window
+	 */
+	private void saveOptions() {
+		preference.put("servername", 	serverNameTextField.getText());
+		preference.put("port", 			serverPortTextField.getText());
+		preference.put("connections", 	serverConnectionsTextField.getText());
 	}
 }
