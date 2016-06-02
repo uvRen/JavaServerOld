@@ -1,9 +1,15 @@
 package server;
 
+import java.io.IOException;
+
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 
 public class ServerMainController {
 	
@@ -35,7 +41,21 @@ public class ServerMainController {
 	 * When user clicks 'Preference' a window with settings should appear
 	 */
 	public void showPreferenceWindow() {
-		System.out.println("Hello");
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("PreferenceServerScene.fxml"));
+			Parent root = (Parent) loader.load();
+			
+			PreferenceServerController settingController = loader.getController();
+			settingController.initTreeViewSettings();
+			
+			Stage stage = new Stage();
+			stage.setScene(new Scene(root, 600, 400));
+			stage.show();
+		}
+		catch(IOException e) {
+			System.err.println("SererMainController: Failed to open settings window");
+			e.printStackTrace();
+		}
 	}
 	
 	/**
