@@ -23,7 +23,7 @@ public class PreferenceServerController {
 					  serverPortTextField,
 					  serverConnectionsTextField;
 	
-	Preferences preference = Preferences.userRoot().node(this.getClass().getName());
+	private Preferences preference = Preferences.userRoot().node(Server.class.getName());
 	
 	/**
 	 * Initialize the TreeView containing all options and by default show all
@@ -54,21 +54,21 @@ public class PreferenceServerController {
 		GridPane.setConstraints(serverNameLabel, 0, 0);
 		
 		serverNameTextField = new TextField();
-		serverNameTextField.setText(preference.get("servername", ""));
+		serverNameTextField.setText(preference.get("servername", "server1"));
 		GridPane.setConstraints(serverNameTextField, 1, 0);
 		
 		Label serverPortLabel = new Label("Port");
 		GridPane.setConstraints(serverPortLabel, 0, 1);
 		
 		serverPortTextField = new TextField();
-		serverPortTextField.setText(preference.get("port", ""));
+		serverPortTextField.setText(Integer.toString(preference.getInt("port", 9999)));
 		GridPane.setConstraints(serverPortTextField, 1, 1);
 		
 		Label serverConnectionsLabel = new Label("Connections");
 		GridPane.setConstraints(serverConnectionsLabel, 0, 2);
 		
 		serverConnectionsTextField = new TextField();
-		serverConnectionsTextField.setText(preference.get("connections", ""));
+		serverConnectionsTextField.setText(preference.get("connections", "-1"));
 		GridPane.setConstraints(serverConnectionsTextField, 1, 2);
 		
 		Button saveButton = new Button("Save");
@@ -92,7 +92,7 @@ public class PreferenceServerController {
 	 */
 	private void saveOptions() {
 		preference.put("servername", 	serverNameTextField.getText());
-		preference.put("port", 			serverPortTextField.getText());
+		preference.putInt("port", 		Integer.parseInt(serverPortTextField.getText()));
 		preference.put("connections", 	serverConnectionsTextField.getText());
 	}
 }

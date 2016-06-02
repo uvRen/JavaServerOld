@@ -3,6 +3,7 @@ package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.prefs.Preferences;
 
 /**
  * A multi-threaded JavaServer that handles incoming connections and data.
@@ -13,17 +14,17 @@ import java.util.ArrayList;
  */
 public class Server {
 	
-	private int port;
 	private ServerSocket server;
 	private ArrayList<ClientThread> clients;
+	private Preferences preference;
 	
 	/**
 	 * Server constructor
 	 * @param port	Port that server should run on
 	 */
-	public Server(int port) {
-		this.port 	= port;
+	public Server() {
 		clients 	= new ArrayList<ClientThread>();
+		preference 	= Preferences.userRoot().node(Server.class.getName());
 	}
 	
 	/**
@@ -32,8 +33,8 @@ public class Server {
 	 */
 	public boolean startServer() {
 		try {
-			//Start server on given port
-			server = new ServerSocket(this.port);
+			//Start server on given port, default 9999
+			server = new ServerSocket(preference.getInt("port", 9999));
 			
 			//Start a Thread that listen for incoming connections
 			new Thread(new ListenForIncomingConnections(this, server)).start();

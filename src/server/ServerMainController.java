@@ -63,7 +63,6 @@ public class ServerMainController {
 	 */
 	private boolean startServer() {
 		if(server == null) {
-			server = new Server(9999);
 			return server.startServer();
 		}
 		else {
