@@ -4,14 +4,18 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.prefs.Preferences;
 
 public class ClientThread {
 	
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
+	private Preferences preference;
 	
 	public ClientThread(Socket client) {
+		preference = Preferences.userRoot().node(Server.class.getName());
 		setupObjectStreams(client);
+		sendStartupRequestToClient();
 	}
 	
 	/**
@@ -29,6 +33,9 @@ public class ClientThread {
 			System.err.println("ClientThread: Failed to setup streams");
 			e.printStackTrace();
 		}
-
+	}
+	
+	private void sendStartupRequestToClient() {
+		
 	}
 }

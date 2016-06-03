@@ -2,6 +2,9 @@ This document contains all the send codes that is send between server and client
 It defines what each part are supposed to do when a code is received. 
 
 Server send:
+1000	Request computer name
+1001	Request username
+1002	Request IP-adress
 
 Server receives:
 
