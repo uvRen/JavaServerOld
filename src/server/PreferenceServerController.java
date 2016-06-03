@@ -1,29 +1,47 @@
 package server;
 
-import java.util.Properties;
 import java.util.prefs.Preferences;
 
+import javax.swing.plaf.OptionPaneUI;
+
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 public class PreferenceServerController {
 	
-	@FXML private BorderPane borderpane;
-	@FXML private HBox contentContainer;
-	@FXML private GridPane optionContainer;
+	@FXML private BorderPane 	borderpane;
+	@FXML private HBox 			contentContainer;
+	@FXML private GridPane 		optionContainer;
+	@FXML private Label 		header;
+	
+	private Preferences 		preference;
+	private TreeItem<String>	currentSelection = null;
+	private Button				saveButton;
 	
 	private TextField serverNameTextField,
 					  serverPortTextField,
 					  serverConnectionsTextField;
 	
-	private Preferences preference = Preferences.userRoot().node(Server.class.getName());
+	public PreferenceServerController() {
+		preference = Preferences.userRoot().node(Server.class.getName());
+		
+		this.saveButton = new Button("Save");
+		saveButton.setOnMouseClicked(e -> 
+		{
+			saveOptions();
+		});
+	}
+	 
 	
 	/**
 	 * Initialize the TreeView containing all options and by default show all
@@ -31,14 +49,23 @@ public class PreferenceServerController {
 	 */
 	@SuppressWarnings("unchecked")
 	public void initTreeViewSettings() {
-		TreeItem<String> root = new TreeItem<String>("DummyNode");
-		TreeItem<String> general = new TreeItem<String>("General");
-		TreeItem<String> client = new TreeItem<String>("Client");
+		TreeItem<String> root 		= new TreeItem<String>("DummyNode");
+		TreeItem<String> general 	= new TreeItem<String>("General");
+		TreeItem<String> client 	= new TreeItem<String>("Client");
 		
 		root.getChildren().addAll(general, client);
 		
 		TreeView<String> tree = new TreeView<String>(root);
 		tree.setShowRoot(false);
+		
+		//EventHandler for when user clicks an item in the TreeView
+		tree.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent arg0) {
+				handleMouseClickListView(tree.getSelectionModel().getSelectedItem());
+			}
+		});
+		
 		//Remove the TreeView that is added from SceneBuilder and replace it with a new one
 		contentContainer.getChildren().remove(0);
 		contentContainer.getChildren().add(0, tree);
@@ -50,6 +77,11 @@ public class PreferenceServerController {
 	 * Add all options connected to 'General' to the GridPane
 	 */
 	private void createOptionsForGeneral() {
+		//If the is something in the GridPane, clear it first
+		optionContainer.getChildren().clear();
+		
+		header.setText("General");
+		
 		Label serverNameLabel = new Label("Servername");
 		GridPane.setConstraints(serverNameLabel, 0, 0);
 		
@@ -70,13 +102,8 @@ public class PreferenceServerController {
 		serverConnectionsTextField = new TextField();
 		serverConnectionsTextField.setText(preference.get("connections", "-1"));
 		GridPane.setConstraints(serverConnectionsTextField, 1, 2);
-		
-		Button saveButton = new Button("Save");
-		saveButton.setOnMouseClicked(e -> 
-		{
-			saveOptions();
-		});
-		GridPane.setConstraints(saveButton, 0, 14);
+
+		GridPane.setConstraints(this.saveButton, 0, 14);
 		
 		optionContainer.getChildren().addAll(serverNameLabel, 
 											 serverNameTextField,
@@ -88,11 +115,61 @@ public class PreferenceServerController {
 	}
 	
 	/**
+	 * Add all options connected to 'Client' to the GridPane
+	 */
+	private void createOptionsForClient() {
+		//If the is something in the GridPane, clear it first
+		optionContainer.getChildren().clear();
+		
+		header.setText("Client");
+		
+		CheckBox computerName = new CheckBox("Computer name");
+		GridPane.setConstraints(computerName, 0, 1, 2, 1);
+		
+		CheckBox userName = new CheckBox("User name");
+		GridPane.setConstraints(userName, 0, 2, 2, 1);
+		
+		CheckBox ipAdress = new CheckBox("IP");
+		GridPane.setConstraints(ipAdress, 0, 3, 2, 1);
+		
+		GridPane.setConstraints(this.saveButton, 0, 14);
+		
+		optionContainer.getChildren().addAll(computerName,
+											 userName,
+											 ipAdress,
+											 saveButton);
+	}
+	/**
 	 * Save all options that is collected from the 'Preference' window
 	 */
 	private void saveOptions() {
-		preference.put("servername", 	serverNameTextField.getText());
-		preference.putInt("port", 		Integer.parseInt(serverPortTextField.getText()));
-		preference.put("connections", 	serverConnectionsTextField.getText());
+		//Save all settings for 'General'
+		if(currentSelection.getValue().equals("General")) {
+			preference.put("servername", 	serverNameTextField.getText());
+			preference.putInt("port", 		Integer.parseInt(serverPortTextField.getText()));
+			preference.put("connections", 	serverConnectionsTextField.getText());
+		}
+	}
+	
+	/**
+	 * When user click an option in the TreeView the window should update and show 
+	 * setting for that category
+	 * @param itemClicked	Item that was clicked
+	 */
+	private void handleMouseClickListView(TreeItem<String> itemClicked) {
+		//If user clicked same option, return
+		if(itemClicked == currentSelection) return;
+		
+		currentSelection = itemClicked;
+		
+		switch(itemClicked.getValue()) {
+		case "General":
+			createOptionsForGeneral();
+			break;
+		case "Client":
+			createOptionsForClient();
+			break;
+		}
+		
 	}
 }

@@ -41,20 +41,42 @@ public class ServerMainController {
 	 * When user clicks 'Preference' a window with settings should appear
 	 */
 	public void showPreferenceWindow() {
+		PreferenceServerController controller;
+		
+		FXMLLoader loader 	= openWindow("PreferenceServerScene.fxml", 600, 400);
+		controller 			= (PreferenceServerController)loader.getController();
+		
+		controller.initTreeViewSettings();
+	}
+	
+	/**
+	 * When user clicks 'About' a window with settings should appear
+	 */
+	public void showAboutWindow() {
+		openWindow("AboutServerScene.fxml", 200, 100);
+	}
+	
+	/**
+	 * Opens a new window with help with a FXML file
+	 * @param fxmlPath	FXML filename
+	 * @param width		Width of window
+	 * @param height	Height of window
+	 */
+	private FXMLLoader openWindow(String fxmlPath, double width, double height) {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("PreferenceServerScene.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
 			Parent root = (Parent) loader.load();
 			
-			PreferenceServerController settingController = loader.getController();
-			settingController.initTreeViewSettings();
-			
 			Stage stage = new Stage();
-			stage.setScene(new Scene(root, 600, 400));
+			stage.setScene(new Scene(root, width, height));
 			stage.show();
+			
+			return loader;
 		}
 		catch(IOException e) {
-			System.err.println("SererMainController: Failed to open settings window");
+			System.err.println("SererMainController: Failed to open window (" + fxmlPath + ")");
 			e.printStackTrace();
+			return null;
 		}
 	}
 	
@@ -63,6 +85,7 @@ public class ServerMainController {
 	 */
 	private boolean startServer() {
 		if(server == null) {
+			this.server = new Server();
 			return server.startServer();
 		}
 		else {
