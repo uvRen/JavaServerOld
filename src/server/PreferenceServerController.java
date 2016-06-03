@@ -32,6 +32,10 @@ public class PreferenceServerController {
 					  serverPortTextField,
 					  serverConnectionsTextField;
 	
+	private CheckBox clientComputerNameCB,
+					 clientUsernameCB,
+					 clientIPAdressCB;
+	
 	public PreferenceServerController() {
 		preference = Preferences.userRoot().node(Server.class.getName());
 		
@@ -123,32 +127,42 @@ public class PreferenceServerController {
 		
 		header.setText("Client");
 		
-		CheckBox computerName = new CheckBox("Computer name");
-		GridPane.setConstraints(computerName, 0, 1, 2, 1);
+		clientComputerNameCB = new CheckBox("Computer name");
+		clientComputerNameCB.setSelected(preference.getBoolean("clientComputerName", false));
+		GridPane.setConstraints(clientComputerNameCB, 0, 1, 2, 1);
 		
-		CheckBox userName = new CheckBox("User name");
-		GridPane.setConstraints(userName, 0, 2, 2, 1);
+		clientUsernameCB = new CheckBox("User name");
+		clientUsernameCB.setSelected(preference.getBoolean("clientUsername", false));
+		GridPane.setConstraints(clientUsernameCB, 0, 2, 2, 1);
 		
-		CheckBox ipAdress = new CheckBox("IP");
-		GridPane.setConstraints(ipAdress, 0, 3, 2, 1);
+		clientIPAdressCB = new CheckBox("IP");
+		clientIPAdressCB.setSelected(preference.getBoolean("clientIPAdress", false));
+		GridPane.setConstraints(clientIPAdressCB, 0, 3, 2, 1);
 		
 		GridPane.setConstraints(this.saveButton, 0, 14);
 		
-		optionContainer.getChildren().addAll(computerName,
-											 userName,
-											 ipAdress,
+		optionContainer.getChildren().addAll(clientComputerNameCB,
+											 clientUsernameCB,
+											 clientIPAdressCB,
 											 saveButton);
 	}
 	/**
 	 * Save all options that is collected from the 'Preference' window
 	 */
 	private void saveOptions() {
-		//Save all settings for 'General'
-		if(currentSelection.getValue().equals("General")) {
+		switch(currentSelection.getValue()) {
+		case "General":
 			preference.put("servername", 	serverNameTextField.getText());
 			preference.putInt("port", 		Integer.parseInt(serverPortTextField.getText()));
-			preference.put("connections", 	serverConnectionsTextField.getText());
+			preference.putInt("connections",Integer.parseInt(serverConnectionsTextField.getText()));
+			break;
+		case "Client":
+			preference.putBoolean("clientComputerName", clientComputerNameCB.isSelected());
+			preference.putBoolean("clientUsername", clientUsernameCB.isSelected());
+			preference.putBoolean("clientIPAdress", clientIPAdressCB.isSelected());
+			break;
 		}
+		
 	}
 	
 	/**
