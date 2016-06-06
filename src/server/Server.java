@@ -5,6 +5,8 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
+import helppackage.SendCodes;
+
 /**
  * A multi-threaded JavaServer that handles incoming connections and data.
  * The server has one thread that listen for incoming connection and one
@@ -18,13 +20,16 @@ public class Server {
 	private ArrayList<ClientThread> clients;
 	private Preferences preference;
 	
+	public static ArrayList<SendCodes> sendCodes;
+	
 	/**
 	 * Server constructor
 	 * @param port	Port that server should run on
 	 */
 	public Server() {
 		clients 	= new ArrayList<ClientThread>();
-		preference 	= Preferences.userRoot().node(Server.class.getName());
+		sendCodes 	= new ArrayList<SendCodes>();
+		preference 	= Preferences.userRoot().node(Server.class.getName());		
 	}
 	
 	/**
@@ -100,8 +105,10 @@ class ListenForIncomingConnections implements Runnable {
 	public void run() {
 		while(true) {
 			try {
-				//When a client connect a ClientThread object is created
+				//When a client connect a ClientThread object is created and a Thread
 				ClientThread client = new ClientThread(socketserver.accept());
+				new Thread(client).start();
+				
 				server.addClient(client);
 			}
 			catch(IOException e) {

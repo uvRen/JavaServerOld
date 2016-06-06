@@ -6,7 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.prefs.Preferences;
 
-public class ClientThread {
+public class ClientThread implements Runnable {
 	
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
@@ -19,15 +19,26 @@ public class ClientThread {
 	}
 	
 	/**
+	 * Listen for incoming data from client
+	 */
+	public void run() {
+		try {
+			System.out.println("Data read from client: " + in.readObject());
+		} 
+		catch (ClassNotFoundException | IOException e) {
+			System.err.println("ClientThread.run(): Failed to read inputstream");
+			e.printStackTrace();
+		}
+	}
+	
+	/**
 	 * Creates streams to enable communication with server
 	 * @param client	Clients socket
 	 */
 	private void setupObjectStreams(Socket client) {
 		try {
 			out = new ObjectOutputStream(client.getOutputStream());
-			out.writeObject("Who the fuck are you?!");
-			out.flush();
-			System.out.println("Server sent message");
+			in	= new ObjectInputStream(client.getInputStream());
 		} 
 		catch (IOException e) {
 			System.err.println("ClientThread: Failed to setup streams");
@@ -35,6 +46,9 @@ public class ClientThread {
 		}
 	}
 	
+	/**
+	 * Send request of what the server wants from the client.
+	 */
 	private void sendStartupRequestToClient() {
 		
 	}
