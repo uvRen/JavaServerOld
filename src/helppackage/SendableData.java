@@ -21,17 +21,25 @@ public class SendableData implements Serializable {
 	public ArrayList<Integer> getCode() {
 		return code;
 	}
-
-	public void setCode(ArrayList<Integer> code) {
-		this.code = code;
+	
+	/**
+	 * Add a code to the list
+	 * @param code	Code to add
+	 */
+	public void addCode(int code) {
+		this.code.add(code);
 	}
 
 	public ArrayList<Object> getData() {
 		return data;
 	}
-
-	public void setData(ArrayList<Object> data) {
-		this.data = data;
+	
+	/**
+	 * Add an object to the list
+	 * @param data	Object to be added
+	 */
+	public void addData(Object data) {
+		this.data.add(data);
 	}
 	
 }

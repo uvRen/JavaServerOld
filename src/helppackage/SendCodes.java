@@ -1,12 +1,26 @@
 package helppackage;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class SendCodes {
+public class SendCodes implements Serializable {
+
+	/**
+	 * Version
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private ArrayList<Tuple> tuple;
 	
-	public SendCodes(String name, int code) {
+	public SendCodes() {
 		tuple = new ArrayList<Tuple>();
+		readSendCodes();
 	}
 	
 	/**
@@ -30,10 +44,72 @@ public class SendCodes {
 		}
 		return -1;
 	}
+	
+	/**
+	 * Save all sendcodes to file
+	 */
+	public void saveSendCodes() {
+		try {
+			FileOutputStream out 	= new FileOutputStream("properties.data");
+			ObjectOutputStream oos 	= new ObjectOutputStream(out);
+			
+			oos.writeObject(this.tuple);
+			oos.flush();
+			oos.close();
+		}
+		catch(IOException e) {
+			System.err.println("SendCodes: Failed to write to file");
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Read all sendcodes from file
+	 */
+	@SuppressWarnings("unchecked")
+	public void readSendCodes() {
+		System.out.println("Read sendcodes");
+		try {
+			FileInputStream in = new FileInputStream("properties.data");
+			ObjectInputStream ois = new ObjectInputStream(in);
+			
+			this.tuple = (ArrayList<Tuple>)ois.readObject();
+			ois.close();
+		} 
+		//File doesn't exists
+		catch (FileNotFoundException e) {
+			System.out.println("Create first time sendcodes");
+			createSendCodeFile();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * When user use the program for the first time a sendcode file need to be initialized. 
+	 */
+	private void createSendCodeFile() {
+		tuple.clear();
+		
+		tuple.add(new Tuple("clientComputerName"	, 1000));
+		tuple.add(new Tuple("clientUsername"		, 1002));
+		tuple.add(new Tuple("clientIPAdress"		, 1004));
+		
+		saveSendCodes();
+	}
+	
 }
 
-class Tuple {
+class Tuple implements Serializable{
 	
+	/**
+	 * Version
+	 */
+	private static final long serialVersionUID = 1L;
 	private String 	name;
 	private int		code;
 	

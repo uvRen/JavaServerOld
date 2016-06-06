@@ -20,7 +20,7 @@ public class Server {
 	private ArrayList<ClientThread> clients;
 	private Preferences preference;
 	
-	public static ArrayList<SendCodes> sendCodes;
+	public static SendCodes sendCodes;
 	
 	/**
 	 * Server constructor
@@ -28,8 +28,8 @@ public class Server {
 	 */
 	public Server() {
 		clients 	= new ArrayList<ClientThread>();
-		sendCodes 	= new ArrayList<SendCodes>();
-		preference 	= Preferences.userRoot().node(Server.class.getName());		
+		sendCodes 	= new SendCodes();
+		preference 	= Preferences.userRoot().node(Server.class.getName());
 	}
 	
 	/**
