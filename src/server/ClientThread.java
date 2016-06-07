@@ -7,15 +7,18 @@ import java.net.Socket;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import helppackage.ClientUser;
 import helppackage.SendableData;
 
 public class ClientThread implements Runnable {
 	
+	private Server server;
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
 	private Preferences preference;
 	
-	public ClientThread(Socket client) {
+	public ClientThread(Server server, Socket client) {
+		this.server = server;
 		preference = Preferences.userRoot().node(Server.class.getName());
 		setupObjectStreams(client);
 		sendStartupRequestToClient();
@@ -26,7 +29,7 @@ public class ClientThread implements Runnable {
 	 */
 	public void run() {
 		try {
-			System.out.println("Data read from client: " + ((SendableData)in.readObject()).getData());
+			handle(in.readObject());
 		} 
 		catch (ClassNotFoundException | IOException e) {
 			System.err.println("ClientThread.run(): Failed to read inputstream");
@@ -58,7 +61,7 @@ public class ClientThread implements Runnable {
 			out.writeObject(data);
 			out.flush();
 		} catch (IOException e) {
-			System.out.println("ClientThread.sendToClient(): Couldnät send data");
+			System.out.println("ClientThread.sendToClient(): Couldn't send data");
 			e.printStackTrace();
 		}
 		
@@ -71,6 +74,7 @@ public class ClientThread implements Runnable {
 		SendableData data = new SendableData();
 		
 		try {
+			//for each option that is true, add it do the SendableData
 			for(String key : preference.keys()) {
 				if(preference.getBoolean(key, false)) {
 					data.addCode(Server.sendCodes.getCode(key));
@@ -82,5 +86,34 @@ public class ClientThread implements Runnable {
 		}
 		
 		sendToClient(data);
+	}
+	
+	/**
+	 * Handles incoming data to server
+	 * @param o	Incoming object
+	 */
+	private void handle(Object o) {
+		SendableData data 		= (SendableData)o;
+		ClientUser newClient 	= new ClientUser();
+		
+		switch(data.getMainCode()) {
+		//Client answer server request '1000'
+		case 1001:
+			for(int i = 0; i < data.getCode().size(); i++) {
+				switch(data.getCode().get(i)) {
+				case 1002:
+					newClient.setComputername((String)data.getData().get(i));
+					break;
+				case 1004:
+					newClient.setUsername((String)data.getData().get(i));
+					break;
+				case 1006:
+					newClient.setIpaddress((String)data.getData().get(i));
+					break;
+				}
+			}
+			server.addUser(newClient);
+			break;
+		}
 	}
 }

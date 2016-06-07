@@ -1,22 +1,46 @@
 package server;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.prefs.Preferences;
 
+import helppackage.ClientUser;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 public class ServerMainController {
 	
-	@FXML private MenuItem start_stop_server;
-	@FXML private Circle serverStatusCircle;
+	@FXML private MenuItem 				start_stop_server;
+	@FXML private Circle 				serverStatusCircle;
+	@FXML private BorderPane			borderpane;
 	
-	private Server server = null;
+	private Server 						server = null;
+	private ArrayList<ClientUser> 		users;
+	private Preferences 				preference;
+	
+	private ObservableList<ClientUser> 	userInfo;
+	private ListView<ClientUser> 		listviewUsers;
+	
+	public ServerMainController() {
+		preference 		= Preferences.userRoot().node(Server.class.getName());
+		users 			= new ArrayList<ClientUser>();
+		userInfo 		= FXCollections.observableArrayList();
+		listviewUsers 	= new ListView<ClientUser>(userInfo);
+	}
+	
 	
 	/**
 	 * Function gets called when user press the 'Start server' or 'Stop server' menuItem
@@ -57,6 +81,15 @@ public class ServerMainController {
 	}
 	
 	/**
+	 * Add a new user to the listview
+	 * @param user	User to be added
+	 */
+	public void addUserToListview(ClientUser user) {
+		this.users.add(user);
+		
+	}
+	
+	/**
 	 * Opens a new window with help with a FXML file
 	 * @param fxmlPath	FXML filename
 	 * @param width		Width of window
@@ -74,7 +107,7 @@ public class ServerMainController {
 			return loader;
 		}
 		catch(IOException e) {
-			System.err.println("SererMainController: Failed to open window (" + fxmlPath + ")");
+			System.err.println("ServerMainController: Failed to open window (" + fxmlPath + ")");
 			e.printStackTrace();
 			return null;
 		}
@@ -86,11 +119,40 @@ public class ServerMainController {
 	private boolean startServer() {
 		if(server == null) {
 			this.server = new Server();
+			setupListView();
 			return server.startServer();
 		}
 		else {
 			return server.startServer();
 		}
+	}
+	
+	/**
+	 * Initialize the ListView
+	 */
+	private void setupListView() {
+		listviewUsers.setCellFactory(new Callback<ListView<ClientUser>, ListCell<ClientUser>>(){
+			 
+            @Override
+            public ListCell<ClientUser> call(ListView<ClientUser> p) {
+                 
+                ListCell<ClientUser> cell = new ListCell<ClientUser>(){
+ 
+                    @Override
+                    protected void updateItem(ClientUser t, boolean bln) {
+                        super.updateItem(t, bln);
+                        if (t != null) {
+                            setText(t.getUsername().getValue());
+                        }
+                    }
+ 
+                };
+                 
+                return cell;
+            }
+        });
+		
+		borderpane.setLeft(listviewUsers);
 	}
 	
 	/**

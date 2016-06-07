@@ -4,10 +4,13 @@ import java.util.prefs.Preferences;
 
 import javax.swing.plaf.OptionPaneUI;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
@@ -36,6 +39,8 @@ public class PreferenceServerController {
 					 clientUsernameCB,
 					 clientIPAdressCB;
 	
+	private ComboBox<String> comboBoxShowClientInfo;
+	
 	public PreferenceServerController() {
 		preference = Preferences.userRoot().node(Server.class.getName());
 		
@@ -58,6 +63,9 @@ public class PreferenceServerController {
 		TreeItem<String> client 	= new TreeItem<String>("Client");
 		
 		root.getChildren().addAll(general, client);
+		
+		//Set 'currentSelection' default to 'General'
+		currentSelection = general;
 		
 		TreeView<String> tree = new TreeView<String>(root);
 		tree.setShowRoot(false);
@@ -106,6 +114,17 @@ public class PreferenceServerController {
 		serverConnectionsTextField = new TextField();
 		serverConnectionsTextField.setText(preference.get("connections", "-1"));
 		GridPane.setConstraints(serverConnectionsTextField, 1, 2);
+		
+		Label connectionExplain = new Label("(-1 is infinity)");
+		GridPane.setConstraints(connectionExplain, 2, 2, 3, 1);
+		
+		Label comboExplain = new Label("What data should be shown about a client");
+		GridPane.setConstraints(comboExplain, 0, 3, 4, 1);
+		
+		ObservableList<String> choice = FXCollections.observableArrayList("Username", "Computername", "IP address");
+		comboBoxShowClientInfo = new ComboBox<String>(choice);
+		comboBoxShowClientInfo.getSelectionModel().select(preference.get("showclientinfo", "IP address"));
+		GridPane.setConstraints(comboBoxShowClientInfo, 0, 4, 2, 1);
 
 		GridPane.setConstraints(this.saveButton, 0, 14);
 		
@@ -115,7 +134,10 @@ public class PreferenceServerController {
 											 serverPortLabel,
 											 serverPortTextField,
 											 serverConnectionsLabel,
-											 serverConnectionsTextField);
+											 serverConnectionsTextField,
+											 connectionExplain, 
+											 comboExplain,
+											 comboBoxShowClientInfo);
 	}
 	
 	/**
@@ -155,6 +177,7 @@ public class PreferenceServerController {
 			preference.put("servername", 	serverNameTextField.getText());
 			preference.putInt("port", 		Integer.parseInt(serverPortTextField.getText()));
 			preference.putInt("connections",Integer.parseInt(serverConnectionsTextField.getText()));
+			preference.put("showclientinfo", comboBoxShowClientInfo.getSelectionModel().getSelectedItem());
 			break;
 		case "Client":
 			preference.putBoolean("clientComputerName", clientComputerNameCB.isSelected());

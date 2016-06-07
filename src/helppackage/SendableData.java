@@ -10,8 +10,9 @@ public class SendableData implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private ArrayList<Integer> code;
-	private ArrayList<Object> data;
+	private int 				mainCode;
+	private ArrayList<Integer> 	code;
+	private ArrayList<Object> 	data;
 	
 	public SendableData() {
 		code = new ArrayList<Integer>();
@@ -20,6 +21,14 @@ public class SendableData implements Serializable {
 
 	public ArrayList<Integer> getCode() {
 		return code;
+	}
+	
+	public void setMainCode(int code) {
+		this.mainCode = code;
+	}
+	
+	public int getMainCode() {
+		return this.mainCode;
 	}
 	
 	/**

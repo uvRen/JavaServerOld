@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
+import helppackage.ClientUser;
 import helppackage.SendCodes;
 
 /**
@@ -18,6 +19,7 @@ public class Server {
 	
 	private ServerSocket server;
 	private ArrayList<ClientThread> clients;
+	private ArrayList<ClientUser>	users;
 	private Preferences preference;
 	
 	public static SendCodes sendCodes;
@@ -28,6 +30,7 @@ public class Server {
 	 */
 	public Server() {
 		clients 	= new ArrayList<ClientThread>();
+		users		= new ArrayList<ClientUser>();
 		sendCodes 	= new SendCodes();
 		preference 	= Preferences.userRoot().node(Server.class.getName());
 	}
@@ -79,6 +82,14 @@ public class Server {
 	}
 	
 	/**
+	 * Add a client to the list of clients
+	 * @param user	ClientUser to be added
+	 */
+	public void addUser(ClientUser user) {
+		this.users.add(user);
+	}
+	
+	/**
 	 * Gets the status of the server connection
 	 * @return	<b>True</b> if server is online, else <b>False</b>
 	 */
@@ -106,7 +117,7 @@ class ListenForIncomingConnections implements Runnable {
 		while(true) {
 			try {
 				//When a client connect a ClientThread object is created and a Thread
-				ClientThread client = new ClientThread(socketserver.accept());
+				ClientThread client = new ClientThread(server, socketserver.accept());
 				new Thread(client).start();
 				
 				server.addClient(client);

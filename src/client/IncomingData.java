@@ -3,6 +3,7 @@ package client;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 
 import helppackage.SendableData;
@@ -67,21 +68,62 @@ public class IncomingData implements Runnable {
 	private void handle(Object o) {
 		SendableData data = (SendableData)o;
 		
+		//Go through all send codes in the incoming data
 		for(Integer code : data.getCode()) {
 			handleSendcode(data, code);
+		}
+		
+		if(data.getMainCode() == 1000) {
+			data.setMainCode(1001);
 		}
 		sendToServer(data);
 	}
 	
 	private void handleSendcode(SendableData data, int code) {
 		switch(code) {
-		case 1000:
-			break;
 		case 1002:
-			data.addData("Simon Berntsson");
+			data.addData(getComputerName());
 			break;
 		case 1004:
+			data.addData(getUsername());
 			break;
+		case 1006:
+			data.addData(getIPAdress());
+			break;
+		}
+	}
+	
+	/**
+	 * Get username of the user that is logged in
+	 * @return	Name of user
+	 */
+	private String getUsername() {
+		return System.getProperty("user.name");
+	}
+	
+	/**
+	 * Get name of the computer
+	 * @return	Name of computer
+	 */
+	private String getComputerName() {
+		try {
+			return InetAddress.getLocalHost().getHostName();
+		}
+		catch(IOException e) {
+			return "";
+		}
+	}
+	
+	/**
+	 * Get the external IP-address
+	 * @return	External IP-adress
+	 */
+	private String getIPAdress() {
+		try {
+			return InetAddress.getLocalHost().getHostAddress();
+		}
+		catch(IOException e) {
+			return "";
 		}
 	}
 }

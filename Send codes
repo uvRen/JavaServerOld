@@ -2,13 +2,14 @@ This document contains all the send codes that is send between server and client
 It defines what each part are supposed to do when a code is received. 
 
 Server send:
-1000	Request computer name
-1002	Request username
-1004	Request IP-adress
+1000	Request data
+1002	Request computer name
+1004	Request username
+1006	Request IP-adress
 
 Server receives:
 
 Client send:
-1001	Response of servers startup requests
+1001	Response of servers '1000' request
 
 Client receives:
