@@ -101,8 +101,6 @@ public class ClientThread implements Runnable {
 		switch(data.getMainCode()) {
 		//Client answer server request '1000'
 		case 1001:
-			System.out.println("CodeSize: " + data.getCode().size());
-			System.out.println("DataSize: " + data.getData().size());
 			for(int i = 0; i < data.getCode().size(); i++) {
 				switch(data.getCode().get(i)) {
 				case 1002:

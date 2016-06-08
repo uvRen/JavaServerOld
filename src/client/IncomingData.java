@@ -82,6 +82,11 @@ public class IncomingData implements Runnable {
 		sendToServer(data);
 	}
 	
+	/**
+	 * Go through all the code in SendableData.code and perform action for each one of them
+	 * @param data	SendableData object that server sent
+	 * @param code	Which code that should be executed
+	 */
 	private void handleSendcode(SendableData data, int code) {
 		switch(code) {
 		case 1002:

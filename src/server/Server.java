@@ -7,6 +7,7 @@ import java.util.prefs.Preferences;
 
 import helppackage.ClientUser;
 import helppackage.SendCodes;
+import javafx.application.Platform;
 
 /**
  * A multi-threaded JavaServer that handles incoming connections and data.
@@ -19,7 +20,6 @@ public class Server {
 	
 	private ServerSocket server;
 	private ArrayList<ClientThread> clients;
-	private ArrayList<ClientUser>	users;
 	private Preferences preference;
 	
 	public static SendCodes sendCodes;
@@ -30,7 +30,6 @@ public class Server {
 	 */
 	public Server() {
 		clients 	= new ArrayList<ClientThread>();
-		users		= new ArrayList<ClientUser>();
 		sendCodes 	= new SendCodes();
 		preference 	= Preferences.userRoot().node(Server.class.getName());
 	}
@@ -86,7 +85,14 @@ public class Server {
 	 * @param user	ClientUser to be added
 	 */
 	public void addUser(ClientUser user) {
-		Main.getServerMainController().addUserToListview(user);
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				Main.getServerMainController().addUserToListview(user);
+			}
+			
+		});
+	
 	}
 	
 	/**

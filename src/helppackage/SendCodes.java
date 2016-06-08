@@ -18,6 +18,9 @@ public class SendCodes implements Serializable {
 	
 	private ArrayList<Tuple> tuple;
 	
+	/**
+	 * Constructor read send codes from file
+	 */
 	public SendCodes() {
 		tuple = new ArrayList<Tuple>();
 		readSendCodes();

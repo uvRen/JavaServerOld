@@ -12,6 +12,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
@@ -131,24 +133,39 @@ public class ServerMainController {
 	 * Initialize the ListView
 	 */
 	private void setupListView() {
+		//Add custom CellFactory to print ClientUser object in the ListView
 		listviewUsers.setCellFactory(new Callback<ListView<ClientUser>, ListCell<ClientUser>>(){
 			 
             @Override
             public ListCell<ClientUser> call(ListView<ClientUser> p) {
-                 
+
                 ListCell<ClientUser> cell = new ListCell<ClientUser>(){
- 
+                	
                     @Override
                     protected void updateItem(ClientUser t, boolean bln) {
                         super.updateItem(t, bln);
                         if (t != null) {
-                            setText(t.getIpaddress().getValue());
+                        	switch(preference.get("showclientinfo", "username")) {
+                        	case "Username":
+                        		setText(t.getUsername().getValue());
+                        		break;
+                        	case "Computername":
+                        		setText(t.getComputername().getValue());
+                        		break;
+                        	case "IP address":
+                        		setText(t.getIpaddress().getValue());
+                        		break;
+                        	}
+                            
                         }
                     }
                 };
                 return cell;
             }
         });
+		
+		
+		
 		
 		borderpane.setLeft(listviewUsers);
 	}

@@ -174,15 +174,15 @@ public class PreferenceServerController {
 	private void saveOptions() {
 		switch(currentSelection.getValue()) {
 		case "General":
-			preference.put("servername", 	serverNameTextField.getText());
-			preference.putInt("port", 		Integer.parseInt(serverPortTextField.getText()));
-			preference.putInt("connections",Integer.parseInt(serverConnectionsTextField.getText()));
-			preference.put("showclientinfo", comboBoxShowClientInfo.getSelectionModel().getSelectedItem());
+			preference.put("servername", 		serverNameTextField.getText());
+			preference.putInt("port", 			Integer.parseInt(serverPortTextField.getText()));
+			preference.putInt("connections",	Integer.parseInt(serverConnectionsTextField.getText()));
+			preference.put("showclientinfo", 	comboBoxShowClientInfo.getSelectionModel().getSelectedItem());
 			break;
 		case "Client":
 			preference.putBoolean("clientComputerName", clientComputerNameCB.isSelected());
-			preference.putBoolean("clientUsername", clientUsernameCB.isSelected());
-			preference.putBoolean("clientIPAdress", clientIPAdressCB.isSelected());
+			preference.putBoolean("clientUsername", 	clientUsernameCB.isSelected());
+			preference.putBoolean("clientIPAdress", 	clientIPAdressCB.isSelected());
 			break;
 		}
 		
