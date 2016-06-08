@@ -72,11 +72,13 @@ public class ClientThread implements Runnable {
 	 */
 	private void sendStartupRequestToClient() {
 		SendableData data = new SendableData();
+		data.setMainCode(1000);
 		
 		try {
 			//for each option that is true, add it do the SendableData
 			for(String key : preference.keys()) {
 				if(preference.getBoolean(key, false)) {
+					System.out.println("Add " + key.toString() + " to request");
 					data.addCode(Server.sendCodes.getCode(key));
 				}
 			}
@@ -99,6 +101,8 @@ public class ClientThread implements Runnable {
 		switch(data.getMainCode()) {
 		//Client answer server request '1000'
 		case 1001:
+			System.out.println("CodeSize: " + data.getCode().size());
+			System.out.println("DataSize: " + data.getData().size());
 			for(int i = 0; i < data.getCode().size(); i++) {
 				switch(data.getCode().get(i)) {
 				case 1002:

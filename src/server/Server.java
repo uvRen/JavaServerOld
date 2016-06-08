@@ -101,7 +101,6 @@ public class Server {
 /**
  * A runnable class that listen for incoming connections
  * @author Simon Berntsson
- *
  */
 class ListenForIncomingConnections implements Runnable {
 	
