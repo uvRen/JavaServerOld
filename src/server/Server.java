@@ -88,11 +88,9 @@ public class Server {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				Main.getServerMainController().addUserToListview(user);
+				Main.getServerMainController().addUserToTreeview(user);
 			}
-			
 		});
-	
 	}
 	
 	/**

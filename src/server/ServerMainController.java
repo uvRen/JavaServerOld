@@ -1,27 +1,23 @@
 package server;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
 import helppackage.ClientUser;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 public class ServerMainController {
 	
@@ -30,17 +26,16 @@ public class ServerMainController {
 	@FXML private BorderPane			borderpane;
 	
 	private Server 						server = null;
-	private ArrayList<ClientUser> 		users;
 	private Preferences 				preference;
 	
 	private ObservableList<ClientUser> 	userInfo;
-	private ListView<ClientUser> 		listviewUsers;
+	private TreeView<String> 		treeviewUsers;
+	private TreeItem<String> 		rootNode;
 	
 	public ServerMainController() {
 		preference 		= Preferences.userRoot().node(Server.class.getName());
-		users 			= new ArrayList<ClientUser>();
 		userInfo 		= FXCollections.observableArrayList();
-		listviewUsers 	= new ListView<ClientUser>(userInfo);
+		
 	}
 	
 	
@@ -86,9 +81,31 @@ public class ServerMainController {
 	 * Add a new user to the listview
 	 * @param user	User to be added
 	 */
-	public void addUserToListview(ClientUser user) {
+	@SuppressWarnings("unchecked")
+	public void addUserToTreeview(ClientUser user) {
 		this.userInfo.add(user);
 		
+		TreeItem<String> newClient = new TreeItem<String>();
+		
+		switch(preference.get("showclientinfo", "username")) {
+    	case "Username":
+    		newClient.setValue((user.getUsername().getValue()));
+    		break;
+    	case "Computername":
+    		newClient.setValue((user.getComputername().getValue()));
+    		break;
+    	case "IP address":
+    		newClient.setValue((user.getIpaddress().getValue()));
+    		break;
+    	}
+		
+		TreeItem<String> username 		= new TreeItem<String>("username: " + user.getUsername().getValue());
+		TreeItem<String> computername 	= new TreeItem<String>("computername: " + user.getComputername().getValue());
+		TreeItem<String> ipaddress 		= new TreeItem<String>("ipaddress: " + user.getIpaddress().getValue());
+		
+		newClient.getChildren().addAll(username, computername, ipaddress);
+		
+		rootNode.getChildren().add(newClient);
 	}
 	
 	/**
@@ -121,7 +138,8 @@ public class ServerMainController {
 	private boolean startServer() {
 		if(server == null) {
 			this.server = new Server();
-			setupListView();
+			//setupListView();
+			setupTreeView();
 			return server.startServer();
 		}
 		else {
@@ -132,6 +150,7 @@ public class ServerMainController {
 	/**
 	 * Initialize the ListView
 	 */
+	/*
 	private void setupListView() {
 		//Add custom CellFactory to print ClientUser object in the ListView
 		listviewUsers.setCellFactory(new Callback<ListView<ClientUser>, ListCell<ClientUser>>(){
@@ -164,10 +183,16 @@ public class ServerMainController {
             }
         });
 		
-		
-		
-		
 		borderpane.setLeft(listviewUsers);
+	}
+	*/
+	
+	private void setupTreeView() {
+		rootNode = new TreeItem<String>();
+		
+		treeviewUsers = new TreeView<String>(rootNode);
+		treeviewUsers.setShowRoot(false);
+		borderpane.setLeft(treeviewUsers);
 	}
 	
 	/**
