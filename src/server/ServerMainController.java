@@ -1,19 +1,28 @@
 package server;
 
+import java.awt.MouseInfo;
 import java.io.IOException;
 import java.util.prefs.Preferences;
 
 import helppackage.ClientUser;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.ContextMenuBuilder;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.MenuItemBuilder;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -31,6 +40,8 @@ public class ServerMainController {
 	private ObservableList<ClientUser> 	userInfo;
 	private TreeView<String> 		treeviewUsers;
 	private TreeItem<String> 		rootNode;
+	
+	private ContextMenu contextMenu;
 	
 	public ServerMainController() {
 		preference 		= Preferences.userRoot().node(Server.class.getName());
@@ -86,6 +97,10 @@ public class ServerMainController {
 		this.userInfo.add(user);
 		
 		TreeItem<String> newClient = new TreeItem<String>();
+		
+		
+		
+				
 		
 		switch(preference.get("showclientinfo", "username")) {
     	case "Username":
@@ -147,50 +162,46 @@ public class ServerMainController {
 		}
 	}
 	
-	/**
-	 * Initialize the ListView
-	 */
-	/*
-	private void setupListView() {
-		//Add custom CellFactory to print ClientUser object in the ListView
-		listviewUsers.setCellFactory(new Callback<ListView<ClientUser>, ListCell<ClientUser>>(){
-			 
-            @Override
-            public ListCell<ClientUser> call(ListView<ClientUser> p) {
-
-                ListCell<ClientUser> cell = new ListCell<ClientUser>(){
-                	
-                    @Override
-                    protected void updateItem(ClientUser t, boolean bln) {
-                        super.updateItem(t, bln);
-                        if (t != null) {
-                        	switch(preference.get("showclientinfo", "username")) {
-                        	case "Username":
-                        		setText(t.getUsername().getValue());
-                        		break;
-                        	case "Computername":
-                        		setText(t.getComputername().getValue());
-                        		break;
-                        	case "IP address":
-                        		setText(t.getIpaddress().getValue());
-                        		break;
-                        	}
-                            
-                        }
-                    }
-                };
-                return cell;
-            }
-        });
-		
-		borderpane.setLeft(listviewUsers);
-	}
-	*/
-	
 	private void setupTreeView() {
 		rootNode = new TreeItem<String>();
 		
 		treeviewUsers = new TreeView<String>(rootNode);
+		
+		contextMenu = new ContextMenu();
+		MenuItem forceDisconnect = new MenuItem("Force disconnect");
+		forceDisconnect.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent e) {
+				
+			}
+		});
+		
+		contextMenu.getItems().add(forceDisconnect);
+		
+		treeviewUsers.setCellFactory(tree -> {
+			TreeCell<String> cell = new TreeCell<String>() {
+                @Override
+                public void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty) ;
+                    if (empty) {
+                        setText(null);
+                    } else {
+                        setText(item);
+                    }
+                }
+            };
+            cell.setOnMouseClicked(event -> {
+                if (!cell.isEmpty()) {
+                	if(event.getButton() == MouseButton.SECONDARY) {
+	                    TreeItem<String> treeItem = cell.getTreeItem();
+	                    contextMenu.show(treeviewUsers, MouseInfo.getPointerInfo().getLocation().getX(), MouseInfo.getPointerInfo().getLocation().getY());
+                	}
+                }
+            });
+            return cell ;
+		});
+		
 		treeviewUsers.setShowRoot(false);
 		borderpane.setLeft(treeviewUsers);
 	}
