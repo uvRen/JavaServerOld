@@ -68,14 +68,17 @@ public class IncomingData implements Runnable {
 	private void handle(Object o) {
 		SendableData data = (SendableData)o;
 		
-		//Go through all send codes in the incoming data
-		for(Integer code : data.getCode()) {
-			handleSendcode(data, code);
+		switch(data.getMainCode()) {
+		//Server send startup request
+		case 1000:
+			//Go through all send codes in the incoming data
+			for(Integer code : data.getCode()) {
+				handleSendcode(data, code);
+			}
+			data.setMainCode(1001);
+			break;
 		}
 		
-		if(data.getMainCode() == 1000) {
-			data.setMainCode(1001);
-		}
 		sendToServer(data);
 	}
 	

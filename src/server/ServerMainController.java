@@ -85,7 +85,7 @@ public class ServerMainController {
 	 * @param user	User to be added
 	 */
 	public void addUserToListview(ClientUser user) {
-		this.users.add(user);
+		this.userInfo.add(user);
 		
 	}
 	
@@ -142,12 +142,10 @@ public class ServerMainController {
                     protected void updateItem(ClientUser t, boolean bln) {
                         super.updateItem(t, bln);
                         if (t != null) {
-                            setText(t.getUsername().getValue());
+                            setText(t.getIpaddress().getValue());
                         }
                     }
- 
                 };
-                 
                 return cell;
             }
         });

@@ -86,7 +86,7 @@ public class Server {
 	 * @param user	ClientUser to be added
 	 */
 	public void addUser(ClientUser user) {
-		this.users.add(user);
+		Main.getServerMainController().addUserToListview(user);
 	}
 	
 	/**
