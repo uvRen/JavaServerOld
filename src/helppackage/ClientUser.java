@@ -3,12 +3,14 @@ package helppackage;
 import javafx.beans.property.SimpleStringProperty;
 
 public class ClientUser {
+	private int id;
 	private SimpleStringProperty username;
 	private SimpleStringProperty computername;
 	private SimpleStringProperty ipaddress;
 	
-	public ClientUser(String username) {
-		this.username 		= new SimpleStringProperty(username);
+	public ClientUser(int id) {
+		this.id = id;
+		this.username 		= new SimpleStringProperty("");
 		this.computername 	= new SimpleStringProperty("");
 		this.ipaddress 		= new SimpleStringProperty("");
 	}
@@ -17,6 +19,14 @@ public class ClientUser {
 		this.username 		= new SimpleStringProperty("");
 		this.computername 	= new SimpleStringProperty("");
 		this.ipaddress 		= new SimpleStringProperty("");
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public SimpleStringProperty getUsername() {

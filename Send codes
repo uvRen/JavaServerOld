@@ -6,6 +6,7 @@ Server send:
 1002	Request computer name
 1004	Request username
 1006	Request IP-adress
+2000	Frce disconnect
 
 Server receives:
 
@@ -13,3 +14,4 @@ Client send:
 1001	Response of servers '1000' request
 
 Client receives:
+2000	Disconnect from server

@@ -7,6 +7,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 import helppackage.SendableData;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 public class IncomingData implements Runnable {
 	
@@ -76,10 +78,14 @@ public class IncomingData implements Runnable {
 				handleSendcode(data, code);
 			}
 			data.setMainCode(1001);
+			sendToServer(data);
+			break;
+		//Disconnect from server
+		case 2000:
+			clientMainController.disconnectFromServer();
+			clientMainController.showForceDisconnectionWindow();
 			break;
 		}
-		
-		sendToServer(data);
 	}
 	
 	/**

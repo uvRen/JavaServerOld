@@ -2,6 +2,7 @@ package server;
 
 import java.awt.MouseInfo;
 import java.io.IOException;
+import java.util.Scanner;
 import java.util.prefs.Preferences;
 
 import helppackage.ClientUser;
@@ -38,15 +39,15 @@ public class ServerMainController {
 	private Preferences 				preference;
 	
 	private ObservableList<ClientUser> 	userInfo;
-	private TreeView<String> 		treeviewUsers;
-	private TreeItem<String> 		rootNode;
+	private TreeView<String> 			treeviewUsers;
+	private TreeItem<String> 			rootNode;
 	
-	private ContextMenu contextMenu;
+	private ContextMenu 				contextMenu;
+	private TreeItem<String>			rightClickedItem;
 	
 	public ServerMainController() {
 		preference 		= Preferences.userRoot().node(Server.class.getName());
 		userInfo 		= FXCollections.observableArrayList();
-		
 	}
 	
 	
@@ -97,11 +98,7 @@ public class ServerMainController {
 		this.userInfo.add(user);
 		
 		TreeItem<String> newClient = new TreeItem<String>();
-		
-		
-		
-				
-		
+
 		switch(preference.get("showclientinfo", "username")) {
     	case "Username":
     		newClient.setValue((user.getUsername().getValue()));
@@ -113,12 +110,13 @@ public class ServerMainController {
     		newClient.setValue((user.getIpaddress().getValue()));
     		break;
     	}
+			
+		TreeItem<String> id 			= new TreeItem<String>("id: " + 			user.getId());
+		TreeItem<String> username 		= new TreeItem<String>("username: " + 		user.getUsername().getValue());
+		TreeItem<String> computername 	= new TreeItem<String>("computername: " + 	user.getComputername().getValue());
+		TreeItem<String> ipaddress 		= new TreeItem<String>("ipaddress: " + 		user.getIpaddress().getValue());
 		
-		TreeItem<String> username 		= new TreeItem<String>("username: " + user.getUsername().getValue());
-		TreeItem<String> computername 	= new TreeItem<String>("computername: " + user.getComputername().getValue());
-		TreeItem<String> ipaddress 		= new TreeItem<String>("ipaddress: " + user.getIpaddress().getValue());
-		
-		newClient.getChildren().addAll(username, computername, ipaddress);
+		newClient.getChildren().addAll(id, username, computername, ipaddress);
 		
 		rootNode.getChildren().add(newClient);
 	}
@@ -153,7 +151,6 @@ public class ServerMainController {
 	private boolean startServer() {
 		if(server == null) {
 			this.server = new Server();
-			//setupListView();
 			setupTreeView();
 			return server.startServer();
 		}
@@ -173,7 +170,11 @@ public class ServerMainController {
 			
 			@Override
 			public void handle(ActionEvent e) {
-				
+				//Extract the ID of client
+				@SuppressWarnings("resource")
+				Scanner in = new Scanner(rightClickedItem.getChildren().get(0).getValue()).useDelimiter("[^0-9]+");
+				//Send ID to server
+				server.forceDisconnectClient(in.nextInt());
 			}
 		});
 		
@@ -195,6 +196,7 @@ public class ServerMainController {
                 if (!cell.isEmpty()) {
                 	if(event.getButton() == MouseButton.SECONDARY) {
 	                    TreeItem<String> treeItem = cell.getTreeItem();
+	                    this.rightClickedItem = treeItem;
 	                    contextMenu.show(treeviewUsers, MouseInfo.getPointerInfo().getLocation().getX(), MouseInfo.getPointerInfo().getLocation().getY());
                 	}
                 }

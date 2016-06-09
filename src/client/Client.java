@@ -3,6 +3,9 @@ package client;
 import java.io.IOException;
 import java.net.Socket;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+
 public class Client {
 	
 	private int port;
@@ -26,8 +29,39 @@ public class Client {
 		catch(IOException e) {
 			System.err.println("Client: Couldn't connect to server");
 			e.printStackTrace();
+			showAlertError("Error", 
+						   "Server may be offline. Try again in a moment", 
+						   "Error information\n" + e.getMessage());
 			return false;
 		}
+	}
+	
+	/**
+	 * Show an error dialog
+	 * @param title			Title 
+	 * @param headerText	Header
+	 * @param contextText	Context
+	 */
+	public void showAlertError(String title, String headerText, String contextText) {
+		Alert failedToConnect = new Alert(AlertType.ERROR);
+		failedToConnect.setTitle(title);
+		failedToConnect.setHeaderText(headerText);
+		failedToConnect.setContentText(contextText);
+		failedToConnect.show();
+	}
+	
+	/**
+	 * Show an warning dialog
+	 * @param title			Title 
+	 * @param headerText	Header
+	 * @param contextText	Context
+	 */
+	public void showAlertWarning(String title, String headerText, String contextText) {
+		Alert failedToConnect = new Alert(AlertType.WARNING);
+		failedToConnect.setTitle(title);
+		failedToConnect.setHeaderText(headerText);
+		failedToConnect.setContentText(contextText);
+		failedToConnect.show();
 	}
 	
 	/**

@@ -18,11 +18,12 @@ import javafx.application.Platform;
  */
 public class Server {
 	
-	private ServerSocket server;
+	private ServerSocket 			server;
 	private ArrayList<ClientThread> clients;
-	private Preferences preference;
+	private Preferences 			preference;
+	private int 					clientIdController;
 	
-	public static SendCodes sendCodes;
+	public static SendCodes 		sendCodes;
 	
 	/**
 	 * Server constructor
@@ -32,6 +33,7 @@ public class Server {
 		clients 	= new ArrayList<ClientThread>();
 		sendCodes 	= new SendCodes();
 		preference 	= Preferences.userRoot().node(Server.class.getName());
+		clientIdController = 0;
 	}
 	
 	/**
@@ -94,11 +96,33 @@ public class Server {
 	}
 	
 	/**
+	 * Force a client to disconnect from server
+	 * @param clientId	ID of client
+	 */
+	public void forceDisconnectClient(int clientId) {
+		//Find the Thread that the client is on
+		for(ClientThread ct : clients) {
+			//When found, force disconnection
+			if(ct.getClient().getId() == clientId) {
+				ct.forceDisconnect();
+			}
+		}
+	}
+	
+	/**
 	 * Gets the status of the server connection
 	 * @return	<b>True</b> if server is online, else <b>False</b>
 	 */
 	public boolean isServerOnline() {
 		return !server.isClosed();
+	}
+	
+	/**
+	 * Returns an unique id to be assign to a client
+	 * @return	Unique number
+	 */
+	public int assignClientUniqueId() {
+		return this.clientIdController++;
 	}
 }
 

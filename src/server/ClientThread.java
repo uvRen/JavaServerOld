@@ -12,10 +12,11 @@ import helppackage.SendableData;
 
 public class ClientThread implements Runnable {
 	
-	private Server server;
-	private ObjectInputStream in;
-	private ObjectOutputStream out;
-	private Preferences preference;
+	private Server 				server;
+	private ObjectInputStream 	in;
+	private ObjectOutputStream 	out;
+	private Preferences 		preference;
+	private ClientUser			client;
 	
 	public ClientThread(Server server, Socket client) {
 		this.server = server;
@@ -35,6 +36,24 @@ public class ClientThread implements Runnable {
 			System.err.println("ClientThread.run(): Failed to read inputstream");
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Gets the ClientUser object of the client at this Thread
+	 * @return	ClientUser object
+	 */
+	public ClientUser getClient() {
+		return this.client;
+	}
+	
+	/**
+	 * Force current client to disconnect from server
+	 */
+	public void forceDisconnect() {
+		SendableData data = new SendableData();
+		data.setMainCode(2000);
+		
+		sendToClient(data);
 	}
 	
 	/**
@@ -64,7 +83,6 @@ public class ClientThread implements Runnable {
 			System.out.println("ClientThread.sendToClient(): Couldn't send data");
 			e.printStackTrace();
 		}
-		
 	}
 	
 	/**
@@ -78,7 +96,6 @@ public class ClientThread implements Runnable {
 			//for each option that is true, add it do the SendableData
 			for(String key : preference.keys()) {
 				if(preference.getBoolean(key, false)) {
-					System.out.println("Add " + key.toString() + " to request");
 					data.addCode(Server.sendCodes.getCode(key));
 				}
 			}
@@ -95,26 +112,26 @@ public class ClientThread implements Runnable {
 	 * @param o	Incoming object
 	 */
 	private void handle(Object o) {
-		SendableData data 		= (SendableData)o;
-		ClientUser newClient 	= new ClientUser();
+		SendableData data = (SendableData)o;
 		
 		switch(data.getMainCode()) {
 		//Client answer server request '1000'
 		case 1001:
+			this.client = new ClientUser(server.assignClientUniqueId());
 			for(int i = 0; i < data.getCode().size(); i++) {
 				switch(data.getCode().get(i)) {
 				case 1002:
-					newClient.setComputername((String)data.getData().get(i));
+					client.setComputername((String)data.getData().get(i));
 					break;
 				case 1004:
-					newClient.setUsername((String)data.getData().get(i));
+					client.setUsername((String)data.getData().get(i));
 					break;
 				case 1006:
-					newClient.setIpaddress((String)data.getData().get(i));
+					client.setIpaddress((String)data.getData().get(i));
 					break;
 				}
 			}
-			server.addUser(newClient);
+			server.addUser(client);
 			break;
 		}
 	}
