@@ -7,8 +7,6 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 import helppackage.SendableData;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 
 public class IncomingData implements Runnable {
 	
@@ -82,8 +80,10 @@ public class IncomingData implements Runnable {
 			break;
 		//Disconnect from server
 		case 2000:
-			clientMainController.disconnectFromServer();
-			clientMainController.showForceDisconnectionWindow();
+			if(clientMainController.disconnectFromServer()) {
+				clientMainController.changeTextOnConnectDisconnectMenuItem("Connect to server");
+				clientMainController.showForceDisconnectionWindow();
+			}
 			break;
 		}
 	}

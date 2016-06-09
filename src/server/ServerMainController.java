@@ -6,6 +6,7 @@ import java.util.Scanner;
 import java.util.prefs.Preferences;
 
 import helppackage.ClientUser;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -159,6 +160,24 @@ public class ServerMainController {
 		}
 	}
 	
+	/**
+	 * Removes a client from the list
+	 * @param id	Id of client
+	 */
+	private void removeUserFromListByID(int id) {
+		for(ClientUser cu : userInfo) {
+			if(cu.getId() == id) {
+				Platform.runLater(new Runnable() {
+					public void run() {
+						userInfo.remove(cu);
+						rightClickedItem.getParent().getChildren().remove(rightClickedItem);
+					}
+				});
+				
+			}
+		}
+	}
+	
 	private void setupTreeView() {
 		rootNode = new TreeItem<String>();
 		
@@ -173,8 +192,11 @@ public class ServerMainController {
 				//Extract the ID of client
 				@SuppressWarnings("resource")
 				Scanner in = new Scanner(rightClickedItem.getChildren().get(0).getValue()).useDelimiter("[^0-9]+");
-				//Send ID to server
-				server.forceDisconnectClient(in.nextInt());
+				//Send ID to server and remove client from list
+				int id = in.nextInt();
+				if(server.forceDisconnectClient(id)) {
+					removeUserFromListByID(id);
+				}
 			}
 		});
 		

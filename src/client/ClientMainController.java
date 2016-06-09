@@ -3,13 +3,12 @@ package client;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 
 public class ClientMainController {
 	@FXML private TextArea textArea;
+	@FXML private MenuItem	connectDisconnectMenuItem;
 	
 	private Client client = null;
 	
@@ -23,9 +22,7 @@ public class ClientMainController {
 			return client.connectToServer();
 		}
 		else {
-			if(!client.isClientConnected())
-				return client.connectToServer();
-			return true;
+			return client.connectToServer();
 		}
 	}
 	
@@ -35,6 +32,14 @@ public class ClientMainController {
 	 */
 	public boolean disconnectFromServer() {
 		return client.disconnectFromServer();
+	}
+	
+	/**
+	 * Change the text on the MenuItem that is used to connect or disconnect to/from server
+	 * @param newText	New text to MenuItem
+	 */
+	public void changeTextOnConnectDisconnectMenuItem(String newText) {
+		connectDisconnectMenuItem.setText(newText);
 	}
 	
 	public void showForceDisconnectionWindow() {

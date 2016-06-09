@@ -98,15 +98,18 @@ public class Server {
 	/**
 	 * Force a client to disconnect from server
 	 * @param clientId	ID of client
+	 * @return	<b>True</b> if success, else <b>False</b>
 	 */
-	public void forceDisconnectClient(int clientId) {
+	public boolean forceDisconnectClient(int clientId) {
 		//Find the Thread that the client is on
 		for(ClientThread ct : clients) {
 			//When found, force disconnection
 			if(ct.getClient().getId() == clientId) {
 				ct.forceDisconnect();
+				return true;
 			}
 		}
+		return false;
 	}
 	
 	/**
