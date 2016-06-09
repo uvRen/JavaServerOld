@@ -173,11 +173,13 @@ public class ServerMainController {
 						rightClickedItem.getParent().getChildren().remove(rightClickedItem);
 					}
 				});
-				
 			}
 		}
 	}
 	
+	/**
+	 * Initialize the TreeView. Add root node and ContextMenu
+	 */
 	private void setupTreeView() {
 		rootNode = new TreeItem<String>();
 		
@@ -214,11 +216,12 @@ public class ServerMainController {
                     }
                 }
             };
+            
             cell.setOnMouseClicked(event -> {
                 if (!cell.isEmpty()) {
                 	if(event.getButton() == MouseButton.SECONDARY) {
-	                    TreeItem<String> treeItem = cell.getTreeItem();
-	                    this.rightClickedItem = treeItem;
+	                    TreeItem<String> treeItem 	= cell.getTreeItem();
+	                    this.rightClickedItem 		= treeItem;
 	                    contextMenu.show(treeviewUsers, MouseInfo.getPointerInfo().getLocation().getX(), MouseInfo.getPointerInfo().getLocation().getY());
                 	}
                 }

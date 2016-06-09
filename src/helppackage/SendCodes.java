@@ -71,7 +71,6 @@ public class SendCodes implements Serializable {
 	 */
 	@SuppressWarnings("unchecked")
 	public void readSendCodes() {
-		System.out.println("Read sendcodes");
 		try {
 			FileInputStream in = new FileInputStream("properties.data");
 			ObjectInputStream ois = new ObjectInputStream(in);
@@ -81,7 +80,6 @@ public class SendCodes implements Serializable {
 		} 
 		//File doesn't exists
 		catch (FileNotFoundException e) {
-			System.out.println("Create first time sendcodes");
 			createSendCodeFile();
 		}
 		catch (IOException e) {

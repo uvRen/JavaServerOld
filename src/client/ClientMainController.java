@@ -48,7 +48,6 @@ public class ClientMainController {
 				client.showAlertWarning("Disconnect", "You have been disconnected from server", "");
 			}
 		});
-		
 	}
 	
 	/**
@@ -58,7 +57,6 @@ public class ClientMainController {
 	 */
 	@FXML protected void menuItemConnectHandler(ActionEvent event) {
 		MenuItem itemPressed = (MenuItem)event.getSource();
-		System.out.println(itemPressed.getText());
 		
 		switch(itemPressed.getText()) {
 		case "Connect to server":
